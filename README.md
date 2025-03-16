@@ -22,7 +22,7 @@ A Python utility for transcribing audio from local video files or online videos 
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/video-transcription-tool.git
+git clone https://github.com/askjohngeorge/video-transcription-tool.git
 cd video-transcription-tool
 ```
 
