@@ -66,17 +66,23 @@ def main():
     )
     parser.add_argument("--save-transcript", type=str, help="Path to save the transcription text")
 
-    # Timestamp options
-    parser.add_argument(
+    # Timestamp options - now as a mutually exclusive group
+    timestamp_group = parser.add_argument_group("timestamp options")
+    timestamp_group.add_argument(
+        "--timestamps",
+        action="store_true",
+        help="Enable timestamps at regular intervals",
+    )
+    timestamp_group.add_argument(
+        "--all-segments",
+        action="store_true",
+        help="Show timestamps for all segments detected by Whisper",
+    )
+    timestamp_group.add_argument(
         "--interval",
         type=float,
         default=30.0,
-        help="Minimum interval in seconds between timestamps (default: 30.0)",
-    )
-    parser.add_argument(
-        "--all-segments",
-        action="store_true",
-        help="Show timestamps for all segments instead of using intervals",
+        help="Interval in seconds between timestamps (only used with --timestamps, default: 30.0)",
     )
 
     args = parser.parse_args()
@@ -126,24 +132,36 @@ def main():
         print("Transcribing audio...")
         result = model.transcribe(file_to_transcribe)
 
-        # Process the segments with timestamps
+        # Process the segments with or without timestamps
         formatted_transcription = ""
-        last_timestamp = -args.interval  # Ensure first segment always gets a timestamp
+        last_timestamp = -args.interval  # Ensure first segment always gets a timestamp if enabled
+        use_timestamps = args.timestamps or args.all_segments
 
         for segment in result["segments"]:
             start_time = segment["start"]
             text = segment["text"]
 
-            # Add timestamp if all_segments is True or if enough time has passed
-            if args.all_segments or start_time - last_timestamp >= args.interval:
+            # No timestamps (default behavior)
+            if not use_timestamps:
+                if not formatted_transcription:
+                    formatted_transcription = text.lstrip()
+                else:
+                    formatted_transcription += " " + text.lstrip()
+            # Add timestamp for all segments
+            elif args.all_segments:
                 if formatted_transcription:  # Add newline except for the first timestamp
                     formatted_transcription += "\n"
-
+                timestamp = format_timestamp(start_time)
+                formatted_transcription += f"{timestamp} {text.lstrip()}"
+            # Add timestamp at specified intervals
+            elif args.timestamps and start_time - last_timestamp >= args.interval:
+                if formatted_transcription:  # Add newline except for the first timestamp
+                    formatted_transcription += "\n"
                 timestamp = format_timestamp(start_time)
                 formatted_transcription += f"{timestamp} {text.lstrip()}"
                 last_timestamp = start_time
+            # Just append text without timestamp (within the interval)
             else:
-                # Just append the text without a timestamp
                 formatted_transcription += " " + text.lstrip()
 
         # Save the transcription if requested
@@ -153,7 +171,7 @@ def main():
             print(f"Transcription saved to: {args.save_transcript}")
 
         # Print the transcription
-        print("\nTranscription with timestamps:\n")
+        print("\nTranscription:\n")
         print(formatted_transcription)
 
     finally:
