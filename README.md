@@ -7,7 +7,7 @@ A Python utility for transcribing audio from local video files or online videos 
 - Download videos from URLs (YouTube, etc.) using yt-dlp
 - Transcribe audio using OpenAI's Whisper speech recognition model
 - Support for various Whisper model sizes (tiny, base, small, medium, large)
-- Add timestamps to transcriptions at configurable intervals
+- Optional timestamps at configurable intervals or for all detected segments
 - Save transcriptions to text files
 - Option to preserve downloaded videos
 
@@ -63,16 +63,16 @@ Available models: tiny, base, small, medium, large (larger models are more accur
 
 ### Adding Timestamps
 
-By default, timestamps are added every 30 seconds:
+By default, no timestamps are added to the transcription. To enable timestamps at regular intervals:
 
 ```bash
-./transcribe.py video.mp4
+./transcribe.py video.mp4 --timestamps
 ```
 
-To customize the timestamp interval:
+To customize the timestamp interval (default is 30 seconds):
 
 ```bash
-./transcribe.py video.mp4 --interval 60
+./transcribe.py video.mp4 --timestamps --interval 60
 ```
 
 To include timestamps for all segments detected by Whisper:
@@ -99,8 +99,12 @@ To include timestamps for all segments detected by Whisper:
 - `--model`: Whisper model to use (default: "base")
 - `--save-video`: Path to save the downloaded video (URL mode only)
 - `--save-transcript`: Path to save the transcription text
-- `--interval`: Minimum interval in seconds between timestamps (default: 30.0)
-- `--all-segments`: Show timestamps for all segments instead of using intervals
+
+Timestamp options:
+
+- `--timestamps`: Enable timestamps at regular intervals
+- `--interval`: Interval in seconds between timestamps (only used with --timestamps, default: 30.0)
+- `--all-segments`: Show timestamps for all segments detected by Whisper
 
 ## Requirements
 
