@@ -7,6 +7,7 @@ A Python utility for transcribing audio from local video files or online videos 
 - Download videos from URLs (YouTube, etc.) using yt-dlp
 - Transcribe audio using OpenAI's Whisper speech recognition model
 - Support for various Whisper model sizes (tiny, base, small, medium, large)
+- Add timestamps to transcriptions at configurable intervals
 - Save transcriptions to text files
 - Option to preserve downloaded videos
 
@@ -60,6 +61,26 @@ chmod +x transcribe.py
 
 Available models: tiny, base, small, medium, large (larger models are more accurate but require more resources)
 
+### Adding Timestamps
+
+By default, timestamps are added every 30 seconds:
+
+```bash
+./transcribe.py video.mp4
+```
+
+To customize the timestamp interval:
+
+```bash
+./transcribe.py video.mp4 --interval 60
+```
+
+To include timestamps for all segments detected by Whisper:
+
+```bash
+./transcribe.py video.mp4 --all-segments
+```
+
 ### Save the Transcription to a File
 
 ```bash
@@ -78,6 +99,8 @@ Available models: tiny, base, small, medium, large (larger models are more accur
 - `--model`: Whisper model to use (default: "base")
 - `--save-video`: Path to save the downloaded video (URL mode only)
 - `--save-transcript`: Path to save the transcription text
+- `--interval`: Minimum interval in seconds between timestamps (default: 30.0)
+- `--all-segments`: Show timestamps for all segments instead of using intervals
 
 ## Requirements
 
