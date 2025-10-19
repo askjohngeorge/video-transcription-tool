@@ -93,6 +93,32 @@ To include timestamps for all segments detected by Whisper:
 ./transcribe.py https://www.youtube.com/watch?v=example --save-video downloaded_video.mp4
 ```
 
+## Common Usage Examples
+
+### Transcribe a Local File to a Custom Directory
+
+```bash
+./transcribe.py video.mp4 --save-transcript ./output/transcript.txt
+```
+
+### Transcribe with Model Selection and Save Output
+
+```bash
+./transcribe.py video.mp4 --model medium --save-transcript ./transcripts/output.txt
+```
+
+### Transcribe with Timestamps and Save to File
+
+```bash
+./transcribe.py video.mp4 --timestamps --interval 60 --save-transcript ./output/transcript_with_timestamps.txt
+```
+
+### Full Example: URL Download with All Options
+
+```bash
+./transcribe.py https://www.youtube.com/watch?v=example --model large --all-segments --save-video ./videos/downloaded.mp4 --save-transcript ./transcripts/full_transcript.txt
+```
+
 ## Command-Line Options
 
 - `input`: Path to a local video file or URL to download and transcribe
