@@ -17,26 +17,32 @@ A Python utility for transcribing audio from local video files or online videos 
 
 - Python 3.7 or higher
 - ffmpeg (required by Whisper for audio processing)
+- uv (Python package installer)
 
 ### Setup
 
-1. Clone this repository:
+1. Install uv if you haven't already:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Or on Windows:
+```powershell
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+2. Clone this repository:
 
 ```bash
 git clone https://github.com/askjohngeorge/video-transcription-tool.git
 cd video-transcription-tool
 ```
 
-2. Install required packages:
+3. Install required packages:
 
 ```bash
-pip install -r requirements.txt
-```
-
-Make sure the script is executable:
-
-```bash
-chmod +x transcribe.py
+uv pip install -r requirements.txt
 ```
 
 ## Usage
@@ -44,19 +50,19 @@ chmod +x transcribe.py
 ### Transcribe a Local Video File
 
 ```bash
-./transcribe.py video.mp4
+uv run transcribe.py video.mp4
 ```
 
 ### Transcribe from YouTube or Other Video URLs
 
 ```bash
-./transcribe.py https://www.youtube.com/watch?v=example
+uv run transcribe.py https://www.youtube.com/watch?v=example
 ```
 
 ### Using Different Whisper Model Sizes
 
 ```bash
-./transcribe.py video.mp4 --model medium
+uv run transcribe.py video.mp4 --model medium
 ```
 
 Available models: tiny, base, small, medium, large (larger models are more accurate but require more resources)
@@ -66,31 +72,31 @@ Available models: tiny, base, small, medium, large (larger models are more accur
 By default, no timestamps are added to the transcription. To enable timestamps at regular intervals:
 
 ```bash
-./transcribe.py video.mp4 --timestamps
+uv run transcribe.py video.mp4 --timestamps
 ```
 
 To customize the timestamp interval (default is 30 seconds):
 
 ```bash
-./transcribe.py video.mp4 --timestamps --interval 60
+uv run transcribe.py video.mp4 --timestamps --interval 60
 ```
 
 To include timestamps for all segments detected by Whisper:
 
 ```bash
-./transcribe.py video.mp4 --all-segments
+uv run transcribe.py video.mp4 --all-segments
 ```
 
 ### Save the Transcription to a File
 
 ```bash
-./transcribe.py video.mp4 --save-transcript output.txt
+uv run transcribe.py video.mp4 --save-transcript output.txt
 ```
 
 ### Download and Keep the Video
 
 ```bash
-./transcribe.py https://www.youtube.com/watch?v=example --save-video downloaded_video.mp4
+uv run transcribe.py https://www.youtube.com/watch?v=example --save-video downloaded_video.mp4
 ```
 
 ## Common Usage Examples
@@ -98,25 +104,25 @@ To include timestamps for all segments detected by Whisper:
 ### Transcribe a Local File to a Custom Directory
 
 ```bash
-./transcribe.py video.mp4 --save-transcript ./output/transcript.txt
+uv run transcribe.py video.mp4 --save-transcript ./output/transcript.txt
 ```
 
 ### Transcribe with Model Selection and Save Output
 
 ```bash
-./transcribe.py video.mp4 --model medium --save-transcript ./transcripts/output.txt
+uv run transcribe.py video.mp4 --model medium --save-transcript ./transcripts/output.txt
 ```
 
 ### Transcribe with Timestamps and Save to File
 
 ```bash
-./transcribe.py video.mp4 --timestamps --interval 60 --save-transcript ./output/transcript_with_timestamps.txt
+uv run transcribe.py video.mp4 --timestamps --interval 60 --save-transcript ./output/transcript_with_timestamps.txt
 ```
 
 ### Full Example: URL Download with All Options
 
 ```bash
-./transcribe.py https://www.youtube.com/watch?v=example --model large --all-segments --save-video ./videos/downloaded.mp4 --save-transcript ./transcripts/full_transcript.txt
+uv run transcribe.py https://www.youtube.com/watch?v=example --model large --all-segments --save-video ./videos/downloaded.mp4 --save-transcript ./transcripts/full_transcript.txt
 ```
 
 ## Command-Line Options
