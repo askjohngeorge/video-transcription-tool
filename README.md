@@ -6,9 +6,11 @@ A Python utility for transcribing audio from local video files or online videos 
 
 - Download videos from URLs (YouTube, etc.) using yt-dlp
 - Transcribe audio using OpenAI's Whisper speech recognition model
+- Real-time streaming output - text appears progressively during transcription
+- 4x faster transcription with lower memory usage (via faster-whisper and int8 quantization)
 - Support for various Whisper model sizes (tiny, base, small, medium, large)
 - Optional timestamps at configurable intervals or for all detected segments
-- Save transcriptions to text files
+- Save transcriptions to text files with incremental writing
 - Option to preserve downloaded videos
 
 ## Installation
@@ -140,7 +142,7 @@ Timestamp options:
 
 ## Requirements
 
-- openai-whisper
+- faster-whisper
 - yt-dlp
 - ffmpeg-python
 
