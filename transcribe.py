@@ -4,7 +4,7 @@ import argparse
 import os
 import tempfile
 import subprocess
-import whisper
+from faster_whisper import WhisperModel
 import math
 
 
@@ -126,53 +126,73 @@ def main():
     try:
         # Load the Whisper model
         print(f"Loading Whisper model: {args.model}")
-        model = whisper.load_model(args.model)
+        model = WhisperModel(args.model, device="cpu", compute_type="int8")
 
         # Transcribe the file
         print("Transcribing audio...")
-        result = model.transcribe(file_to_transcribe)
+        segments, info = model.transcribe(file_to_transcribe)
 
-        # Process the segments with or without timestamps
+        # Print header before streaming starts
+        print("\nTranscription:\n")
+
+        # Open file for streaming writes if requested
+        output_file = None
+        if args.save_transcript:
+            output_file = open(args.save_transcript, "w", encoding="utf-8")
+
+        # Process segments as they're generated (real-time streaming)
         formatted_transcription = ""
         last_timestamp = -args.interval  # Ensure first segment always gets a timestamp if enabled
         use_timestamps = args.timestamps or args.all_segments
 
-        for segment in result["segments"]:
-            start_time = segment["start"]
-            text = segment["text"]
+        for segment in segments:
+            start_time = segment.start
+            text = segment.text
+
+            # Determine formatted output for this segment
+            segment_output = ""
 
             # No timestamps (default behavior)
             if not use_timestamps:
                 if not formatted_transcription:
-                    formatted_transcription = text.lstrip()
+                    segment_output = text.lstrip()
                 else:
-                    formatted_transcription += " " + text.lstrip()
+                    segment_output = " " + text.lstrip()
             # Add timestamp for all segments
             elif args.all_segments:
                 if formatted_transcription:  # Add newline except for the first timestamp
-                    formatted_transcription += "\n"
+                    segment_output = "\n"
                 timestamp = format_timestamp(start_time)
-                formatted_transcription += f"{timestamp} {text.lstrip()}"
+                segment_output += f"{timestamp} {text.lstrip()}"
             # Add timestamp at specified intervals
             elif args.timestamps and start_time - last_timestamp >= args.interval:
                 if formatted_transcription:  # Add newline except for the first timestamp
-                    formatted_transcription += "\n"
+                    segment_output = "\n"
                 timestamp = format_timestamp(start_time)
-                formatted_transcription += f"{timestamp} {text.lstrip()}"
+                segment_output += f"{timestamp} {text.lstrip()}"
                 last_timestamp = start_time
             # Just append text without timestamp (within the interval)
             else:
-                formatted_transcription += " " + text.lstrip()
+                segment_output = " " + text.lstrip()
 
-        # Save the transcription if requested
-        if args.save_transcript:
-            with open(args.save_transcript, "w", encoding="utf-8") as f:
-                f.write(formatted_transcription)
-            print(f"Transcription saved to: {args.save_transcript}")
+            # Stream to terminal
+            print(segment_output, end="", flush=True)
 
-        # Print the transcription
-        print("\nTranscription:\n")
-        print(formatted_transcription)
+            # Stream to file if open
+            if output_file:
+                output_file.write(segment_output)
+                output_file.flush()
+
+            # Build complete transcription
+            formatted_transcription += segment_output
+
+        # Add final newline to terminal
+        print()
+
+        # Close file if it was opened
+        if output_file:
+            output_file.close()
+            print(f"\nTranscription saved to: {args.save_transcript}")
 
     finally:
         # Clean up the temporary directory if we created one
