@@ -2,6 +2,8 @@
 
 import argparse
 import os
+import shutil
+import sys
 import tempfile
 import subprocess
 from faster_whisper import WhisperModel
@@ -42,6 +44,26 @@ def is_likely_url(text):
     return text.startswith(("http://", "https://", "www.", "youtube.com", "youtu.be"))
 
 
+def update_ytdlp():
+    """Update yt-dlp to the latest version using uv."""
+    if shutil.which("uv"):
+        result = subprocess.run(
+            ["uv", "pip", "install", "--upgrade", "yt-dlp"],
+            capture_output=True,
+            text=True
+        )
+        # Only print if there was an actual update
+        if "Installed" in result.stdout or "Updated" in result.stdout:
+            print("yt-dlp updated to latest version")
+
+
+def main_with_update():
+    """Entry point that updates yt-dlp before running (unless --no-update)."""
+    if "--no-update" not in sys.argv:
+        update_ytdlp()
+    main()
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Transcribe audio from a local file or download and transcribe from a URL using Whisper."
@@ -58,6 +80,13 @@ def main():
         default="base",
         choices=["tiny", "base", "small", "medium", "large"],
         help="Whisper model to use for transcription",
+    )
+
+    # Update options
+    parser.add_argument(
+        "--no-update",
+        action="store_true",
+        help="Skip automatic yt-dlp update check (faster startup)",
     )
 
     # Output options

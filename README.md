@@ -44,27 +44,29 @@ cd video-transcription-tool
 3. Install required packages:
 
 ```bash
-uv pip install -r requirements.txt
+uv sync
 ```
 
 ## Usage
 
+**Note:** The tool automatically updates yt-dlp to the latest version on each run. Use `--no-update` to skip this for faster startup.
+
 ### Transcribe a Local Video File
 
 ```bash
-uv run transcribe.py video.mp4
+uv run transcribe video.mp4
 ```
 
 ### Transcribe from YouTube or Other Video URLs
 
 ```bash
-uv run transcribe.py https://www.youtube.com/watch?v=example
+uv run transcribe https://www.youtube.com/watch?v=example
 ```
 
 ### Using Different Whisper Model Sizes
 
 ```bash
-uv run transcribe.py video.mp4 --model medium
+uv run transcribe video.mp4 --model medium
 ```
 
 Available models: tiny, base, small, medium, large (larger models are more accurate but require more resources)
@@ -74,31 +76,31 @@ Available models: tiny, base, small, medium, large (larger models are more accur
 By default, no timestamps are added to the transcription. To enable timestamps at regular intervals:
 
 ```bash
-uv run transcribe.py video.mp4 --timestamps
+uv run transcribe video.mp4 --timestamps
 ```
 
 To customize the timestamp interval (default is 30 seconds):
 
 ```bash
-uv run transcribe.py video.mp4 --timestamps --interval 60
+uv run transcribe video.mp4 --timestamps --interval 60
 ```
 
 To include timestamps for all segments detected by Whisper:
 
 ```bash
-uv run transcribe.py video.mp4 --all-segments
+uv run transcribe video.mp4 --all-segments
 ```
 
 ### Save the Transcription to a File
 
 ```bash
-uv run transcribe.py video.mp4 --save-transcript output.txt
+uv run transcribe video.mp4 --save-transcript output.txt
 ```
 
 ### Download and Keep the Video
 
 ```bash
-uv run transcribe.py https://www.youtube.com/watch?v=example --save-video downloaded_video.mp4
+uv run transcribe https://www.youtube.com/watch?v=example --save-video downloaded_video.mp4
 ```
 
 ## Common Usage Examples
@@ -106,31 +108,32 @@ uv run transcribe.py https://www.youtube.com/watch?v=example --save-video downlo
 ### Transcribe a Local File to a Custom Directory
 
 ```bash
-uv run transcribe.py video.mp4 --save-transcript ./output/transcript.txt
+uv run transcribe video.mp4 --save-transcript ./output/transcript.txt
 ```
 
 ### Transcribe with Model Selection and Save Output
 
 ```bash
-uv run transcribe.py video.mp4 --model medium --save-transcript ./transcripts/output.txt
+uv run transcribe video.mp4 --model medium --save-transcript ./transcripts/output.txt
 ```
 
 ### Transcribe with Timestamps and Save to File
 
 ```bash
-uv run transcribe.py video.mp4 --timestamps --interval 60 --save-transcript ./output/transcript_with_timestamps.txt
+uv run transcribe video.mp4 --timestamps --interval 60 --save-transcript ./output/transcript_with_timestamps.txt
 ```
 
 ### Full Example: URL Download with All Options
 
 ```bash
-uv run transcribe.py https://www.youtube.com/watch?v=example --model large --all-segments --save-video ./videos/downloaded.mp4 --save-transcript ./transcripts/full_transcript.txt
+uv run transcribe https://www.youtube.com/watch?v=example --model large --all-segments --save-video ./videos/downloaded.mp4 --save-transcript ./transcripts/full_transcript.txt
 ```
 
 ## Command-Line Options
 
 - `input`: Path to a local video file or URL to download and transcribe
 - `--model`: Whisper model to use (default: "base")
+- `--no-update`: Skip automatic yt-dlp update check (faster startup)
 - `--save-video`: Path to save the downloaded video (URL mode only)
 - `--save-transcript`: Path to save the transcription text
 
