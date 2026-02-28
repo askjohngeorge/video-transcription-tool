@@ -59,9 +59,13 @@ def update_ytdlp():
 
 def main_with_update():
     """Entry point that updates yt-dlp before running (unless --no-update)."""
-    if "--no-update" not in sys.argv:
-        update_ytdlp()
-    main()
+    try:
+        if "--no-update" not in sys.argv:
+            update_ytdlp()
+        main()
+    except KeyboardInterrupt:
+        print("\nInterrupted.")
+        sys.exit(130)
 
 
 def main():
