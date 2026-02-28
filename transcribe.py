@@ -18,24 +18,22 @@ def format_timestamp(seconds):
     return f"[{hours:02d}:{minutes:02d}:{seconds:02d}]"
 
 
-def download_video(url, output_path):
-    """Download a video from a URL using yt-dlp."""
-    # Construct the yt-dlp command
+def download_audio(url, output_path):
+    """Download audio from a URL using yt-dlp."""
     command = [
         "yt-dlp",
-        "-f",
-        "mp4",  # Prefer MP4 format
-        "-o",
-        output_path,
+        "-f", "bestaudio",       # Best quality audio-only stream
+        "-x",                     # Extract audio
+        "--audio-format", "m4a",  # Consistent output format
+        "-o", output_path,
         url,
     ]
 
-    # Execute the command
     try:
         subprocess.run(command, check=True)
         return True
     except subprocess.CalledProcessError as e:
-        print(f"Error downloading video: {e}")
+        print(f"Error downloading audio: {e}")
         return False
 
 
@@ -91,7 +89,7 @@ def main():
 
     # Output options
     parser.add_argument(
-        "--save-video", type=str, help="Path to save the downloaded video (URL mode only)"
+        "--save-audio", type=str, help="Path to save the downloaded audio (URL mode only)"
     )
     parser.add_argument("--save-transcript", type=str, help="Path to save the transcription text")
 
@@ -126,27 +124,24 @@ def main():
         # It looks like a URL
         print(f"Detected URL input: {args.input}")
 
-        # Determine where to save the video
-        if args.save_video:
-            video_path = args.save_video
-            temp_dir = None  # We're not using a temp directory
+        # Determine where to save the audio
+        if args.save_audio:
+            audio_path = args.save_audio
+            temp_dir = None
         else:
-            # Create a temporary directory to store the downloaded video
             temp_dir = tempfile.TemporaryDirectory()
-            video_path = os.path.join(temp_dir.name, "video.mp4")
+            audio_path = os.path.join(temp_dir.name, "audio.m4a")
 
-        # Download the video
-        print("Downloading video...")
-        if not download_video(args.input, video_path):
-            print("Failed to download the video. Exiting.")
+        # Download audio only
+        print("Downloading audio...")
+        if not download_audio(args.input, audio_path):
+            print("Failed to download audio. Exiting.")
             if temp_dir:
                 temp_dir.cleanup()
             return
 
-        print(f"Video downloaded successfully to: {video_path}")
-
-        # Set the file to transcribe
-        file_to_transcribe = video_path
+        print(f"Audio downloaded successfully to: {audio_path}")
+        file_to_transcribe = audio_path
     else:
         # Neither a local file nor a URL
         print(f"Error: '{args.input}' is not a valid file path or URL.")
