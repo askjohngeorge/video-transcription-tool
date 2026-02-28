@@ -4,14 +4,14 @@ A Python utility for transcribing audio from local video files or online videos 
 
 ## Features
 
-- Download videos from URLs (YouTube, etc.) using yt-dlp
+- Download audio from URLs (YouTube, etc.) using yt-dlp
 - Transcribe audio using OpenAI's Whisper speech recognition model
 - Real-time streaming output - text appears progressively during transcription
 - 4x faster transcription with lower memory usage (via faster-whisper and int8 quantization)
 - Support for various Whisper model sizes (tiny, base, small, medium, large)
 - Optional timestamps at configurable intervals or for all detected segments
 - Save transcriptions to text files with incremental writing
-- Option to preserve downloaded videos
+- Option to preserve downloaded audio
 
 ## Installation
 
@@ -97,10 +97,10 @@ uv run transcribe video.mp4 --all-segments
 uv run transcribe video.mp4 --save-transcript output.txt
 ```
 
-### Download and Keep the Video
+### Download and Keep the Audio
 
 ```bash
-uv run transcribe https://www.youtube.com/watch?v=example --save-video downloaded_video.mp4
+uv run transcribe https://www.youtube.com/watch?v=example --save-audio downloaded_audio.m4a
 ```
 
 ## Common Usage Examples
@@ -126,7 +126,7 @@ uv run transcribe video.mp4 --timestamps --interval 60 --save-transcript ./outpu
 ### Full Example: URL Download with All Options
 
 ```bash
-uv run transcribe https://www.youtube.com/watch?v=example --model large --all-segments --save-video ./videos/downloaded.mp4 --save-transcript ./transcripts/full_transcript.txt
+uv run transcribe https://www.youtube.com/watch?v=example --model large --all-segments --save-audio ./audio/downloaded.m4a --save-transcript ./transcripts/full_transcript.txt
 ```
 
 ## Command-Line Options
@@ -134,7 +134,7 @@ uv run transcribe https://www.youtube.com/watch?v=example --model large --all-se
 - `input`: Path to a local video file or URL to download and transcribe
 - `--model`: Whisper model to use (default: "base")
 - `--no-update`: Skip automatic yt-dlp update check (faster startup)
-- `--save-video`: Path to save the downloaded video (URL mode only)
+- `--save-audio`: Path to save the downloaded audio (URL mode only)
 - `--save-transcript`: Path to save the transcription text
 
 Timestamp options:
