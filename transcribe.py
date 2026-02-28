@@ -45,13 +45,15 @@ def is_likely_url(text):
 def update_ytdlp():
     """Update yt-dlp to the latest version using uv."""
     if shutil.which("uv"):
-        result = subprocess.run(
-            ["uv", "pip", "install", "--upgrade", "yt-dlp"],
+        # Update the lock file to pick up the latest yt-dlp version
+        lock_result = subprocess.run(
+            ["uv", "lock", "--upgrade-package", "yt-dlp"],
             capture_output=True,
             text=True
         )
-        # Only print if there was an actual update
-        if "Installed" in result.stdout or "Updated" in result.stdout:
+        if lock_result.returncode == 0 and "Updated" in lock_result.stderr:
+            # Sync the venv with the updated lock file
+            subprocess.run(["uv", "sync"], capture_output=True, text=True)
             print("yt-dlp updated to latest version")
 
 
