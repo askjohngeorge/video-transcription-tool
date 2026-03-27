@@ -4,7 +4,9 @@ A Python utility for transcribing audio from local video files or online videos 
 
 ## Features
 
-- Download audio from URLs (YouTube, etc.) using yt-dlp
+- Download audio from URLs (YouTube, LinkedIn, etc.) using yt-dlp
+- Raw download mode for sites that don't offer separate audio streams
+- Automatic fallback prompt when audio-only download fails
 - Transcribe audio using OpenAI's Whisper speech recognition model
 - Real-time streaming output - text appears progressively during transcription
 - 4x faster transcription with lower memory usage (via faster-whisper and int8 quantization)
@@ -97,6 +99,16 @@ uv run transcribe video.mp4 --all-segments
 uv run transcribe video.mp4 --save-transcript output.txt
 ```
 
+### Transcribe from Sites Without Separate Audio Streams
+
+For sites like LinkedIn that don't offer audio-only streams, use the `--raw` flag:
+
+```bash
+uv run transcribe https://www.linkedin.com/feed/update/example --raw
+```
+
+If you don't use `--raw`, the tool will automatically offer to fall back to a full video download when audio-only download fails.
+
 ### Download and Keep the Audio
 
 ```bash
@@ -134,6 +146,7 @@ uv run transcribe https://www.youtube.com/watch?v=example --model large --all-se
 - `input`: Path to a local video file or URL to download and transcribe
 - `--model`: Whisper model to use (default: "base")
 - `--no-update`: Skip automatic yt-dlp update check (faster startup)
+- `--raw`: Download with default yt-dlp settings instead of audio-only (use for sites that don't offer separate audio streams)
 - `--save-audio`: Path to save the downloaded audio (URL mode only)
 - `--save-transcript`: Path to save the transcription text
 
